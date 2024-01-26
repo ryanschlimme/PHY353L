@@ -41,13 +41,23 @@ for i in dfList:
     Ch1Std.append(i["Ch1"].std())
     Ch2Std.append(i["Ch2"].std())
 
-
 # Creating Histograms
-for i, x in zip(dfList, intervals):
-    plt.hist(i["Ch1"], bins = 20, color = "b")
-    plt.hist(i["Ch2"], bins = 20, color = "r")
-    plt.legend(["Channel 1", "Channel 2"])
-    plt.xlabel("Gamma Ray Events per Interval")
-    plt.ylabel("Counts")
-    plt.title(str(x) + "ms")
-    plt.show()
+# for i, x in zip(dfList, intervals):
+#     plt.hist(i["Ch1"], bins = 20, color = "b")
+#     plt.hist(i["Ch2"], bins = 20, color = "r")
+#     plt.legend(["Channel 1", "Channel 2"])
+#     plt.xlabel("Gamma Ray Events per Interval")
+#     plt.ylabel("Counts")
+#     plt.title(str(x) + "ms")
+#     plt.savefig(str(x)+"ms.pdf")
+#     plt.close()
+
+# Comparing Statistics Graph
+plt.loglog(intervals, Ch1Avg, color = "b")
+plt.loglog(intervals, Ch2Avg, color = "r")
+plt.loglog(intervals, Ch1Std, "--b")
+plt.loglog(intervals, Ch2Std, "--r")
+plt.xlabel("Time Interval ($\log{(ms)}$)")
+plt.legend(["Channel 1 Averages", "Channel 2 Averages", "Channel 1 Stds", "Channel 2 Stds"])
+plt.savefig("Statistics.pdf")
+plt.close()
