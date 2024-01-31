@@ -9,14 +9,14 @@ import pandas as pd
 from scipy.optimize import curve_fit
 
 
-def Gaussian(x, a, b, c):
-    return a*np.exp(-(x-b)**2/(2*c**2))
+def Linear(x, m, b):
+    return m*x + b
 
 
 # Importing data as list of dataframes
 dfList = []
 intervals = [10, 25, 50, 100, 250, 400, 600, 800, 1000, 1200, 1500, 2500, 4000]
-nameIndex = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\College\Spring 2024\PHY353L\Labs\Lab 1\Lab 1 Data\Cleaned Data\ms" + str(i) + ".lvm" for i in intervals]
+nameIndex = [r"C:\Users\ryans\OneDrive\Desktop\College\Spring 2024\PHY353L\Labs\Lab 1\Lab 1 Data\Cleaned Data\ms" + str(i) + ".lvm" for i in intervals]
 for i in nameIndex:
     dfList.append(pd.read_csv(i, sep = "\t", engine = "python"))
 
@@ -53,11 +53,25 @@ for i in dfList:
 #     plt.close()
 
 # Comparing Statistics Graph
-plt.loglog(intervals, Ch1Avg, color = "b")
-plt.loglog(intervals, Ch2Avg, color = "r")
-plt.loglog(intervals, Ch1Std, "--b")
-plt.loglog(intervals, Ch2Std, "--r")
+plt.plot(intervals, Ch1Avg, color = "b")
+plt.plot(intervals, Ch2Avg, color = "r")
+plt.plot(intervals, Ch1Std, "--b")
+plt.plot(intervals, Ch2Std, "--r")
 plt.xlabel("Time Interval ($\log{(ms)}$)")
 plt.legend(["Channel 1 Averages", "Channel 2 Averages", "Channel 1 Stds", "Channel 2 Stds"])
-plt.savefig("Statistics.pdf")
+plt.savefig("StatisticsLinear.pdf")
 plt.close()
+
+# Linear Fit
+popt, pcov = curve_fit(Linear, intervals, Ch1Avg)
+print("Channel 1")
+print("Fitted Parameters: ", popt)
+print("Parameter Standard Errors: ", np.sqrt(np.diag(pcov)))
+print()
+
+popt, pcov = curve_fit(Linear, intervals, Ch2Avg)
+print("Channel 2")
+print("Fitted Parameters: ", popt)
+print("Parameter Standard Errors: ", np.sqrt(np.diag(pcov)))
+print()
+

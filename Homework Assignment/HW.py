@@ -12,7 +12,7 @@ from scipy.optimize import curve_fit
 cols = [str(j)+str(i) for i in range(1,7) for j in ["x","y","z"]]
 cols1 = ["t"] + cols
 
-df = pd.read_csv(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\College\Spring 2024\PHY353L\Data\SampleData_Spring2024.dat", 
+df = pd.read_csv(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\College\Spring 2024\PHY353L\Homework Assignment\Homework Data\SampleData_Spring2024.dat", 
                    header = None, sep = "  *", names = cols1, engine = "python")
 
 
