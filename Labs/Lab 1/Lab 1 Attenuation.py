@@ -109,8 +109,10 @@ fig, axes = plt.subplots(2, 3)
 
 z = range(0, 5)
 for i, ax, j in zip(z, axes.flatten(), intervals):
-    ax.plot(thicknesses, Ch1Avgs[i])
-    ax.plot(thicknesses, Ch2Avgs[i])
+    ax.plot(thicknesses, Ch1Avgs[i], "b")
+    ax.plot(thicknesses, Ch2Avgs[i], "r")
+    ax.plot(thicknesses, Ch1Stds[i], "b--")
+    ax.plot(thicknesses, Ch2Stds[i], "r--")
     string = str(j) + str(" ms")
     ax.set_title(string)
 
@@ -118,7 +120,7 @@ axes[-1, -1].axis("off")
 
 fig.supxlabel("Thickness of lead (mm)")
 fig.supylabel("Average Gamma Ray Events")
-fig.legend(["Channel 1", "Channel 2"], loc="lower right")
+fig.legend(["Channel 1 Average", "Channel 2 Average", "Channel 1 Stds", "Channel 2 Stds"], loc="lower right")
 fig.suptitle("Attenuation Coefficient of Lead as Measured by Gamma Ray Detection \n \
              Faceted by Counting Interval")
 plt.savefig("Attenuation Graphs.pdf")

@@ -8,6 +8,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import pandas as pd
 from scipy.optimize import curve_fit
+import scipy.stats as st
 
 cols = [str(j)+str(i) for i in range(1,7) for j in ["x","y","z"]]
 cols1 = ["t"] + cols
@@ -35,14 +36,20 @@ plt.close()
 # Problem 2
 # Compute the mean and standard deviation of all columns after the first.
 # Present results as table.
-print("      ", str("Mean").center(5), "   ", str("Std Dev").center(10))
-for col in df.columns[1:]:
-    print(str(col), "--  ", str(round(np.mean(df[col]), 3)).ljust(5), "   ", str(round(np.std(df[col]), 3)).ljust(10))
-print()
+# print("      ", str("Mean").center(5), "   ", str("Std Dev").center(10))
+# for col in df.columns[1:]:
+#     print(str(col), "--  ", str(round(np.mean(df[col]), 3)).ljust(5), "   ", str(round(np.std(df[col]), 3)).ljust(10))
+# print()
 
 # Problem 3
 # Compare average values of z for first 6 particles. Are they different? How do you quantify difference?
 # ANSWER: a t test???
+
+z = [str("z") + str(i) for i in range(1,7)]
+
+for i in z:
+    data = df[i]
+    print(str(i), ":", st.t.interval(confidence=0.95, df=len(data)-1, loc=np.mean(data), scale=st.sem(data)))
 
 
 # Problem 4
@@ -105,14 +112,14 @@ plt.close()
 # to the standard deviation computed in question 2. Is the Gaussian a good fit?
 
 # Using the average of the bin boundaries
-counts, bins, bars = plt.hist(df["x1"], bins = 20)
-bindiff = [(bins[n]+bins[n-1])/2 for n in range(1,len(bins))]
-popt, pcov = curve_fit(Gaussian, bindiff, counts)
-print("Particle 1 x position")
-print("Fitted Parameters: ", popt)
-print("Parameter Standard Errors: ", np.sqrt(np.diag(pcov)))
-print("RMSE: ", np.sqrt(np.mean((counts-Gaussian(bindiff, *popt))**2)/len(counts)))
-print()
+# counts, bins, bars = plt.hist(df["x1"], bins = 20)
+# bindiff = [(bins[n]+bins[n-1])/2 for n in range(1,len(bins))]
+# popt, pcov = curve_fit(Gaussian, bindiff, counts)
+# print("Particle 1 x position")
+# print("Fitted Parameters: ", popt)
+# print("Parameter Standard Errors: ", np.sqrt(np.diag(pcov)))
+# print("RMSE: ", np.sqrt(np.mean((counts-Gaussian(bindiff, *popt))**2)/len(counts)))
+# print()
 
 xvals = np.linspace(-0.5, 0.5, 1000)
 plt.plot(xvals, Gaussian(xvals, *popt))
@@ -122,14 +129,14 @@ plt.legend(["Gaussian Fit", "Raw Histogram"])
 plt.savefig("Problem 9.1.png")
 plt.close()
 
-counts, bins, bars = plt.hist(df["x2"], bins = 20)
-bindiff = [(bins[n]+bins[n-1])/2 for n in range(1,len(bins))]
-popt, pcov = curve_fit(Gaussian, bindiff, counts)
-print("Particle 1 x position")
-print("Fitted Parameters: ", popt)
-print("Parameter Standard Errors: ", np.sqrt(np.diag(pcov)))
-print("RMSE: ", np.sqrt(np.mean((counts-Gaussian(bindiff, *popt))**2)/len(counts)))
-print()
+# counts, bins, bars = plt.hist(df["x2"], bins = 20)
+# bindiff = [(bins[n]+bins[n-1])/2 for n in range(1,len(bins))]
+# popt, pcov = curve_fit(Gaussian, bindiff, counts)
+# print("Particle 1 x position")
+# print("Fitted Parameters: ", popt)
+# print("Parameter Standard Errors: ", np.sqrt(np.diag(pcov)))
+# print("RMSE: ", np.sqrt(np.mean((counts-Gaussian(bindiff, *popt))**2)/len(counts)))
+# print()
 
 xvals = np.linspace(2.25, 3.25, 1000)
 plt.plot(xvals, Gaussian(xvals, *popt))
