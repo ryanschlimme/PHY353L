@@ -111,31 +111,45 @@ z = range(0, 5)
 for i, ax, j in zip(z, axes.flatten(), intervals):
     ax.plot(thicknesses, Ch1Avgs[i], "b")
     ax.plot(thicknesses, Ch2Avgs[i], "r")
-    ax.plot(thicknesses, Ch1Stds[i], "b--")
-    ax.plot(thicknesses, Ch2Stds[i], "r--")
-    string = str(j) + str(" ms")
-    ax.set_title(string)
-
-axes[-1, -1].axis("off")
-
-fig.supxlabel("Thickness of lead (mm)")
-fig.supylabel("Average Gamma Ray Events")
-fig.legend(["Channel 1 Average", "Channel 2 Average", "Channel 1 Stds", "Channel 2 Stds"], loc="lower right")
-fig.suptitle("Attenuation Coefficient of Lead as Measured by Gamma Ray Detection \n \
-             Faceted by Counting Interval")
-plt.savefig("Attenuation Graphs.pdf")
+    ax.plot(thicknesses, Ch1Stds[i], "b--d"])
+plt.ylabel("Counts")
+plt.xlabel("Lead thickness (mm)")
+plt.savefig("Attenuation Paper Figure.svg", bbox_inches = "tight")
 plt.close()
 
 # Fitting Exponential Decay Functions
+bList1 = []
+bList2 = []
+sdList1 = []
+sdList2 = []
 for i, j in zip(z, intervals):
     popt, pcov = curve_fit(Exp, thicknesses, Ch1Avgs[i])
+    bList1.append(popt[1])
+    sdList1.append(pcov[1]**2)  # Can only average variance
     print(str(j) + str(" ms"))
     print("     Channel 1")
     print("     Fitted Parameters: ", popt)
     print("     Parameter Standard Errors: ", np.sqrt(np.diag(pcov)))
     print()
     popt, pcov = curve_fit(Exp, thicknesses, Ch2Avgs[i])
+    bList2.append(popt[1])
+    sdList2.append(pcov[1]**2)  # Can only average variance
     print("     Channel 2")
     print("     Fitted Parameters: ", popt)
     print("     Parameter Standard Errors: ", np.sqrt(np.diag(pcov)))
     print()
+
+# Measuring Attenuation Coefficients
+    
+'''
+Cobalt 60 decays by means of ejecting a beta particle and 2 gamma rays of
+approximate energies 1.2 and 1.3 MeV. The linear absorption coefficient of Pb
+was found to be 0.545 cm^-1 by https://issuu.com/ijmretjournal/docs/03082838
+
+We found
+Channel 1: 0.5261 +/- 0.0003 cm^-1
+Channel 2: 0.4336 +/- 0.0004 cm^-1
+'''
+
+print("Channel 1:", round(np.mean(bList1)*10, 4), "+/-", round(np.sqrt(np.mean(sdList1)*10), 4), "cm^-1") 
+print("Channel 2:", round(np.mean(bList2)*10, 4), "+/-", round(np.sqrt(np.mean(sdList2)*10), 4), "cm^-1")

@@ -16,7 +16,7 @@ def Linear(x, m, b):
 # Importing data as list of dataframes
 dfList = []
 intervals = [10, 25, 50, 100, 250, 400, 600, 800, 1000, 1200, 1500, 2500, 4000]
-nameIndex = [r"C:\Users\ryans\OneDrive\Desktop\College\Spring 2024\PHY353L\Labs\Lab 1\Lab 1 Data\Cleaned Data\ms" + str(i) + ".lvm" for i in intervals]
+nameIndex = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\College\Spring 2024\PHY353L\Labs\Lab 1\Lab 1 Data\Cleaned Data\ms" + str(i) + ".lvm" for i in intervals]
 for i in nameIndex:
     dfList.append(pd.read_csv(i, sep = "\t", engine = "python"))
 
@@ -51,18 +51,49 @@ for i in dfList:
 #     plt.title(str(x) + "ms")
 #     plt.savefig(str(x)+"ms.pdf")
 #     plt.close()
+    
+# Creating Figure Histograms
+fig, axes = plt.subplots(2, 1, figsize = [3.375, 5], sharex= True, sharey= True)
+
+for i, z, ax in zip(["Ch1", "Ch2"], ["b", "r"], axes.flatten()):
+    ax.hist(dfList[0][i], bins = np.arange(0-0.25, max(dfList[0][i] + 0.25), 0.5), color = z)
+    ax.legend([i])
+fig.supxlabel("Gamma Ray Events per Interval")
+fig.supylabel("Counts")
+plt.savefig("Poissonian Hist Paper Figure.svg", bbox_inches = "tight")
+plt.close()
+
+fig, axes = plt.subplots(2, 1, figsize = [3.375, 5], sharey= True)
+
+for i, z, ax in zip(["Ch1", "Ch2"], ["b", "r"], axes.flatten()):
+    ax.hist(dfList[-1][i], bins = 16, color = z)
+    ax.legend([i])
+fig.supxlabel("Gamma Ray Events per Interval")
+fig.supylabel("Counts")
+plt.savefig("Gaussian Hist Paper Figure.svg", bbox_inches = "tight")
+plt.close()
 
 # Comparing Statistics Graph
+plt.figure(figsize= [3.375, 2.75])
 plt.plot(intervals, Ch1Avg, color = "b")
 plt.plot(intervals, Ch2Avg, color = "r")
 plt.plot(intervals, Ch1Std, "--b")
 plt.plot(intervals, Ch2Std, "--r")
-plt.xlabel("Time Interval ($\log{(ms)}$)")
-plt.legend(["Channel 1 Averages", "Channel 2 Averages", "Channel 1 Stds", "Channel 2 Stds"])
-plt.savefig("StatisticsLinear.pdf")
+plt.xlabel("Time Interval (ms)")
+plt.ylabel("Counts")
+plt.legend(["Ch1 Avg", "Ch2 Avg", "Ch1 Std", "Ch2 Std"])
+plt.savefig("Statistics Paper Figure.svg", bbox_inches = "tight")
 plt.close()
 
 # Linear Fit
+'''
+Channel 1:
+m = 0.146 +/- 0.003, b = 1.8 +/- 0.4
+
+Channel 2:
+m = 0.108 +/- 0.002, b = 1.2 =/- 0.3
+
+'''
 popt, pcov = curve_fit(Linear, intervals, Ch1Avg)
 print("Channel 1")
 print("Fitted Parameters: ", popt)
