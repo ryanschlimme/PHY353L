@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.optimize import curve_fit
+import statistics as stat
 
 # Fit abs(Vs) = hc/e * 1/lambda + phi/e
 # Order of lists is Tests [8, 9, 10, 11, 6, 7]
@@ -24,19 +25,45 @@ hTrue = 6.62607015e-34  # Placnk's Constant (Js)
 
 # Plot raw data to determine cutoff for pre and post Vs
 
-tests = [12, 13, 14, 15, 16, 17]
+tests = [13, 14, 15, 16]
 nameIndex = [
-    r"C:\Users\ryans\OneDrive\Desktop\College\Spring 2024\PHY353L\Labs\Lab 2\Raw Data\Test" +
+    r"C:\Users\Ryan Schlimme\OneDrive\Desktop\College\Spring 2024\PHY353L\Labs\Lab 2\Raw Data\Test" +
     str(i) for i in tests]
 
+repeatedIndex = [
+    r"C:\Users\Ryan Schlimme\OneDrive\Desktop\College\Spring 2024\PHY353L\Labs\Lab 2\Repeated Raw Data\Test" +
+    str(i) for i in range(3, 11)]
+
 dfList = []
+dfListRepeated = []
 
 for i in nameIndex:
     dfList.append(pd.read_csv(i, sep="\t", engine="python"))
 
-# for i in range(6):
-#     plt.plot(dfList[i]["applied voltage (volts)"].tolist(), dfList[i]["measured current (nanoamps)"].tolist())
-#     plt.show()
+for i in repeatedIndex:
+    dfListRepeated.append(pd.read_csv(i, sep="\t", engine="python"))
+
+avgVdata = []
+avgAdata = []
+
+for x in range(len(dfList)):
+    xVlist = dfList[x]["applied voltage (volts)"].values.tolist()
+    y1Vlist = dfListRepeated[2*x]["applied voltage (volts)"].tolist()
+    y2Vlist = dfListRepeated[2*x+1]["applied voltage (volts)"].tolist()
+    xAlist = dfList[x]["measured current (nanoamps)"].tolist()
+    y1Alist = dfListRepeated[2*x]["measured current (nanoamps)"].tolist()
+    y2Alist = dfListRepeated[2*x+1]["measured current (nanoamps)"].tolist()
+    avgVinternal = []
+    avgAinternal = []
+    for i in range(len(xVlist)):
+        avgVinternal.append(stat.fmean([xVlist[i], y1Vlist[i], y2Vlist[i]]))
+        avgAinternal.append((xAlist[i] + y1Alist[i] + y2Alist[i])/3)
+    avgVdata.append(avgVinternal)
+    avgAdata.append(avgAinternal)
+
+for i in range(4):
+    plt.plot(avgVdata[i], avgAdata[i])
+    plt.show()
 
 # Melissinos linear fitting
 # Fit linear equation to pre Vs data and post Vs data. Intersection is Vs.
@@ -46,41 +73,31 @@ AdataPre = []
 VdataPost = []
 AdataPost = []
 
-# Test12
-# VdataPre.append(dfList[0]["applied voltage (volts)"][0:103].tolist())
-# AdataPre.append(dfList[0]["measured current (nanoamps)"][0:103].tolist())
-# VdataPost.append(dfList[0]["applied voltage (volts)"][252:].tolist())
-# AdataPost.append(dfList[0]["measured current (nanoamps)"][252:].tolist())
+TODO: # change indices for pre and post data using previous plots
 
-# Test13
-VdataPre.append(dfList[1]["applied voltage (volts)"][0:77].tolist())
-AdataPre.append(dfList[1]["measured current (nanoamps)"][0:77].tolist())
-VdataPost.append(dfList[1]["applied voltage (volts)"][202:].tolist())
-AdataPost.append(dfList[1]["measured current (nanoamps)"][202:].tolist())
+# Test13, 3, 4
+VdataPre.append(avgVdata[0][0:77])
+AdataPre.append(avgAdata[0][0:77])
+VdataPost.append(avgVdata[0][202:])
+AdataPost.append(avgAdata[0][202:])
 
-# Test14
-VdataPre.append(dfList[2]["applied voltage (volts)"][0:77].tolist())
-AdataPre.append(dfList[2]["measured current (nanoamps)"][0:77].tolist())
-VdataPost.append(dfList[2]["applied voltage (volts)"][202:].tolist())
-AdataPost.append(dfList[2]["measured current (nanoamps)"][202:].tolist())
+# Test14, 5, 6
+VdataPre.append(avgVdata[1][0:77])
+AdataPre.append(avgAdata[1][0:77])
+VdataPost.append(avgVdata[1][202:])
+AdataPost.append(avgAdata[1][202:])
 
-# Test15
-VdataPre.append(dfList[3]["applied voltage (volts)"][0:152].tolist())
-AdataPre.append(dfList[3]["measured current (nanoamps)"][0:152].tolist())
-VdataPost.append(dfList[3]["applied voltage (volts)"][227:].tolist())
-AdataPost.append(dfList[3]["measured current (nanoamps)"][227:].tolist())
+# Test15, 7, 8
+VdataPre.append(avgVdata[2][0:152])
+AdataPre.append(avgAdata[2][0:152])
+VdataPost.append(avgVdata[2][227:])
+AdataPost.append(avgAdata[2][227:])
 
-# Test16
-VdataPre.append(dfList[4]["applied voltage (volts)"][0:177].tolist())
-AdataPre.append(dfList[4]["measured current (nanoamps)"][0:177].tolist())
-VdataPost.append(dfList[4]["applied voltage (volts)"][232:].tolist())
-AdataPost.append(dfList[4]["measured current (nanoamps)"][232:].tolist())
-
-# # Test17
-# VdataPre.append(dfList[5]["applied voltage (volts)"][0:750].tolist())
-# AdataPre.append(dfList[5]["measured current (nanoamps)"][0:750].tolist())
-# VdataPost.append(dfList[5]["applied voltage (volts)"][916:].tolist())
-# AdataPost.append(dfList[5]["measured current (nanoamps)"][916:].tolist())
+# Test16, 9, 10
+VdataPre.append(avgVdata[3][0:177])
+AdataPre.append(avgAdata[3][0:177])
+VdataPost.append(avgVdata[3][232:])
+AdataPost.append(avgAdata[3][232:])
 
 Vs = []
 
@@ -110,5 +127,5 @@ plt.close()
 
 popt, pcov = curve_fit(Linear, invW, absVs)
 
-print(str(popt[0]/(c/e)) + " +/-" + str((np.sqrt(np.diag(pcov))/(c/e))[0]) + " Js")
+print(str(popt[0]/(c/e)) + " +/- " + str((np.sqrt(np.diag(pcov))/(c/e))[0]) + " Js")
 
