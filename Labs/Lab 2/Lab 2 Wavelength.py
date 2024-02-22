@@ -10,6 +10,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.optimize import curve_fit
 import statistics as stat
+import os
+
+my_path = os.path.dirname(__file__)
 
 # Fit abs(Vs) = hc/e * 1/lambda + phi/e
 # Order of lists is Tests [8, 9, 10, 11, 6, 7]
@@ -61,9 +64,14 @@ for x in range(len(dfList)):
     avgVdata.append(avgVinternal)
     avgAdata.append(avgAinternal)
 
-for i in range(4):
-    plt.plot(avgVdata[i], avgAdata[i])
-    plt.show()
+'''Single Trace Figure'''
+plt.figure(figsize= [3.375, 2.75])
+plt.plot(avgVdata[2], avgAdata[2])
+plt.xlabel("Applied Voltage (V)")
+plt.ylabel("Photocurrent (nA)")
+plt.legend(["431-440 nm Raw Trace"])
+plt.savefig(my_path + r"\Figures\Wavelength Single.svg", bbox_inches = "tight")
+plt.close()
 
 # Melissinos linear fitting
 # Fit linear equation to pre Vs data and post Vs data. Intersection is Vs.
@@ -73,7 +81,6 @@ AdataPre = []
 VdataPost = []
 AdataPost = []
 
-TODO: # change indices for pre and post data using previous plots
 
 # Test13, 3, 4
 VdataPre.append(avgVdata[0][0:77])
@@ -113,19 +120,53 @@ for i in range(4):
     # plt.close()
     Vs.append((popt1[1]-popt2[1])/(popt2[0]-popt1[0]))
 
+'''Linear Model Trace Figure'''
+plt.figure(figsize= [3.375, 2.75])
+popt1, pcov1 = curve_fit(Linear, VdataPre[2], AdataPre[2])
+popt2, pcov2 = curve_fit(Linear, VdataPost[2], AdataPost[2])
+intersection = (popt1[1]-popt2[1])/(popt2[0]-popt1[0])
+print(intersection)
+
+xvals = np.linspace(-2.5, -0.2, 1000)
+xvals2 = np.linspace(-0.5, 0.5, 1000)
+
+plt.plot(avgVdata[2], avgAdata[2], label = "431-440 nm Raw Trace")
+plt.plot(xvals, Linear(xvals, *popt1), color = "black", alpha = 0.5, label = "")
+plt.plot(xvals2, Linear(xvals2, *popt2), color = "black", alpha = 0.5, label = "")
+plt.plot(intersection, Linear(intersection, *popt1), "ko", label = "$V_S = -0.43$ V", markersize = "5")
+plt.xlabel("Applied Voltage (V)")
+plt.ylabel("Photocurrent (nA)")
+plt.legend()
+plt.savefig(my_path + r"\Figures\Wavelength Fit.svg", bbox_inches = "tight")
+plt.close()
+
+
 
 wavelength = [(365+375)/2, 405, (431+440)/2, 548]
 
-wavelength = [i*10**(-9) for i in wavelength]
+wavelength2 = [i*10**(-9) for i in wavelength]
 
 absVs = [abs(i) for i in Vs]
 invW = [1/i for i in wavelength]
+invW2 = [1/i for i in wavelength2]
 
-plt.plot(invW, absVs)
-plt.show()
-plt.close()
-
-popt, pcov = curve_fit(Linear, invW, absVs)
+popt, pcov = curve_fit(Linear, invW2, absVs)
 
 print(str(popt[0]/(c/e)) + " +/- " + str((np.sqrt(np.diag(pcov))/(c/e))[0]) + " Js")
+print(str(popt[1]*e) + " +/- " + str(np.sqrt(np.diag(pcov))[1]*e) + " J")
 
+'''Linear Fit Figure'''
+plt.figure(figsize= [3.375, 2.75])
+
+xvals = np.linspace(np.min(invW), np.max(invW), 1000)
+popt, pcov = curve_fit(Linear, invW, absVs)
+
+plt.plot(invW, absVs, label = "Raw Data")
+plt.plot(xvals, Linear(xvals, *popt), label = "Fitted Line", alpha = 0.5, color = "k")
+
+plt.xlabel(r"$1/\lambda$ (1/nm)")
+plt.ylabel("$|V_S|$ (V)")
+plt.legend()
+
+plt.savefig(my_path + r"\Figures\Vs vs Lambda.svg", bbox_inches = "tight")
+plt.close()
