@@ -46,6 +46,7 @@ for i in nameIndex:
 for i in repeatedIndex:
     dfListRepeated.append(pd.read_csv(i, sep="\t", engine="python"))
 
+
 avgVdata = []
 avgAdata = []
 
@@ -64,12 +65,23 @@ for x in range(len(dfList)):
     avgVdata.append(avgVinternal)
     avgAdata.append(avgAinternal)
 
+Amax = avgAdata[0][-1]
+scaling = []
+
+for i in range(len(avgAdata)):
+    data = avgAdata[i]
+    scaling = Amax/data[-1]
+    data1 = [z*scaling for z in data]
+    avgAdata[i] = data1
+
+
 '''Single Trace Figure'''
 plt.figure(figsize= [3.375, 2.75])
+plt.plot(avgVdata[0], avgAdata[0])
 plt.plot(avgVdata[2], avgAdata[2])
 plt.xlabel("Applied Voltage (V)")
 plt.ylabel("Photocurrent (nA)")
-plt.legend(["431-440 nm Raw Trace"])
+plt.legend(["365-375 nm", "431-440 nm"])
 plt.savefig(my_path + r"\Figures\Wavelength Single.svg", bbox_inches = "tight")
 plt.close()
 
@@ -161,7 +173,7 @@ plt.figure(figsize= [3.375, 2.75])
 xvals = np.linspace(np.min(invW), np.max(invW), 1000)
 popt, pcov = curve_fit(Linear, invW, absVs)
 
-plt.plot(invW, absVs, label = "Raw Data")
+plt.plot(invW, absVs, "o-", label = "Raw Data")
 plt.plot(xvals, Linear(xvals, *popt), label = "Fitted Line", alpha = 0.5, color = "k")
 
 plt.xlabel(r"$1/\lambda$ (1/nm)")

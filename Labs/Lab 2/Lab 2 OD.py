@@ -6,10 +6,10 @@ Investigating preliminary relationship between applied voltage and
 photocurrent for photoelectric effect measurements using Hg lamp'''
 
 import statistics as stat
-# import numpy as np
+import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-# from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit
 import os
 
 my_path = os.path.dirname(__file__)
@@ -29,11 +29,11 @@ hTrue = 6.62607015e-34  # Placnk's Constant (Js)
 # Plot raw data to determine cutoff for pre and post Vs
 
 nameIndex = [
-    r"C:\Users\Ryan Schlimme\OneDrive\Desktop\College\Spring 2024\PHY353L\Labs\Lab 2\Raw Data\NDTest" +
+    r"C:\Users\ryans\OneDrive\Desktop\College\Spring 2024\PHY353L\Labs\Lab 2\Raw Data\NDTest" +
     str(i) for i in range(1, 5)]
 
 repeatedIndex = [
-    r"C:\Users\Ryan Schlimme\OneDrive\Desktop\College\Spring 2024\PHY353L\Labs\Lab 2\Repeated Raw Data\NDTest" +
+    r"C:\Users\ryans\OneDrive\Desktop\College\Spring 2024\PHY353L\Labs\Lab 2\Repeated Raw Data\NDTest" +
     str(i) for i in range(5, 13)]
 
 dfList = []
@@ -68,14 +68,19 @@ preAdata = avgAdata[:]
 
 
 Amax = avgAdata[0][292]
-scaling = []
+scalingList = []
 
 for i in range(len(avgAdata)):
     data = avgAdata[i]
     scaling = Amax/data[292]
+    scalingList.append(scaling)
     data1 = [z*scaling for z in data]
     avgAdata[i] = data1
 
+print(scalingList)
+OD = [0.1, 0.3, 0.5, 0.9]
+TrueScaling = [10**(-0.1) / 10**(-i) for i in OD]
+print(TrueScaling)
 
 '''Averaged and Corrected ND Figure'''
 fig, (ax0, ax1) = plt.subplots(1, 2, sharex= True, sharey= True, figsize = [2*3.375, 2.75])
@@ -96,31 +101,40 @@ plt.close()
 
 # first to -0.75, -.25 to 0.4
 
-# VdataPre = []
-# AdataPre = []
-# VdataPost = []
-# AdataPost = []
+VdataPre = []
+AdataPre = []
+VdataPost = []
+AdataPost = []
 
-# for i in range(4):
-#     VdataPre.append(dfList[i]["applied voltage (volts)"][0:177].tolist())
-#     AdataPre.append(dfList[i]["measured current (nanoamps)"][0:177].tolist())
-#     VdataPost.append(dfList[i]["applied voltage (volts)"][227:292].tolist())
-#     AdataPost.append(dfList[i]["measured current (nanoamps)"][227:292].tolist())
+for i in range(4):
+    VdataPre.append(avgVdata[i][0:152])
+    AdataPre.append(avgAdata[i][0:152])
+    VdataPost.append(avgVdata[i][242:289])
+    AdataPost.append(avgAdata[i][242:289])
 
-# Vs = []
+Vs = []
+
+sdList = []
+for i in range(len(avgAdata[0])):
+    sdList.append(np.std([avgAdata[0][i], avgAdata[1][i], avgAdata[2][i], avgAdata[3][i]]))
+
+sdList = [i**2 for i in sdList]
+
+print(str(np.sqrt(np.mean(sdList))) + " +/- " + str(np.sqrt(np.mean(sdList))))
 
 
-# for i in range(4):
-#     popt1, pcov1 = curve_fit(Linear, VdataPre[i], AdataPre[i])
-#     popt2, pcov2 = curve_fit(Linear, VdataPost[i], AdataPost[i])
-#     # append Vs as the intersection
-#     # plt.plot(dfList[(i)]["applied voltage (volts)"].tolist(), dfList[(i)]["measured current (nanoamps)"].tolist())
-#     # xvals = np.linspace(-2.5, 1, 1000)
-#     # plt.plot(xvals, Linear(xvals, *popt1))
-#     # plt.plot(xvals, Linear(xvals, *popt2))
-#     # plt.close()
-#     Vs.append((popt1[1]-popt2[1])/(popt2[0]-popt1[0]))
+for i in range(4):
+    popt1, pcov1 = curve_fit(Linear, VdataPre[i], AdataPre[i])
+    popt2, pcov2 = curve_fit(Linear, VdataPost[i], AdataPost[i])
+    # append Vs as the intersection
+    # plt.plot(dfList[(i)]["applied voltage (volts)"].tolist(), dfList[(i)]["measured current (nanoamps)"].tolist())
+    # xvals = np.linspace(-2.5, 1, 1000)
+    # plt.plot(xvals, Linear(xvals, *popt1))
+    # plt.plot(xvals, Linear(xvals, *popt2))
+    # plt.close()
+    Vs.append((popt1[1]-popt2[1])/(popt2[0]-popt1[0]))
 
+# print(str(np.mean(Vs)) + " +/- " + str(np.std(Vs)/np.sqrt(len(Vs))))
 
 # OD = [0.1, 0.3, 0.5, 0.9]
 # intensities = [10**i for i in OD]
