@@ -1,0 +1,32 @@
+{
+    "paramaters": {
+        "Enabled": {
+            "type": "BOOL",
+            "value": false
+        },
+        "Higher Bound": {
+            "max": 1.0,
+            "min": 0.0,
+            "type": "FLOAT",
+            "value": 1.0
+        },
+        "Inner Offset": {
+            "max": 0.8999999761581421,
+            "min": -0.0,
+            "type": "FLOAT",
+            "value": 0.0
+        },
+        "Lower Bound": {
+            "max": 1.0,
+            "min": 0.0,
+            "type": "FLOAT",
+            "value": 0.5
+        },
+        "Power": {
+            "max": 1.9500000476837158,
+            "min": 0.10000000149011612,
+            "type": "FLOAT",
+            "value": 1.0
+        }
+    }
+}

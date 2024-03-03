@@ -1,0 +1,8 @@
+{
+    "paramaters": {
+        "Enabled": {
+            "type": "BOOL",
+            "value": false
+        }
+    }
+}

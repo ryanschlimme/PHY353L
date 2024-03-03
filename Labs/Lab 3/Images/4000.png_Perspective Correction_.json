@@ -1,0 +1,26 @@
+{
+    "paramaters": {
+        "Enabled": {
+            "type": "BOOL",
+            "value": false
+        },
+        "Horizontal Offset": {
+            "max": 0.5,
+            "min": -0.5,
+            "type": "FLOAT",
+            "value": 0.0
+        },
+        "Strength": {
+            "max": 128,
+            "min": -64,
+            "type": "INT",
+            "value": 0
+        },
+        "Vertical Offset": {
+            "max": 0.5,
+            "min": -0.5,
+            "type": "FLOAT",
+            "value": 0.0
+        }
+    }
+}
